@@ -6,7 +6,18 @@ from sklearn.linear_model import Ridge  # Importer Ridge
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import joblib
 import os
-from config import PROCESSED_DATA_PATH, MODEL_PATH, FEATURES, TARGET, TEST_SIZE, RANDOM_STATE
+import yaml
+
+# Charger les configurations depuis config.yaml
+with open('config.yaml', 'r') as file:
+    config = yaml.safe_load(file)
+    
+PROCESSED_DATA_PATH = config['path']['processed_data_path']
+MODEL_PATH = config['path']['model_path']
+FEATURES = config['value']['features']
+TARGET = config['value']['target']
+TEST_SIZE = config['value']['test_size']
+RANDOM_STATE = config['value']['random_state']
 
 def train_model():
     """Entraîne un modèle de prédiction de durée de trajet."""

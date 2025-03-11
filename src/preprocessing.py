@@ -1,7 +1,14 @@
 import pandas as pd
 import numpy as np
-from config import RAW_DATA_PATH, PROCESSED_DATA_PATH
+import yaml
 import os
+
+# Charger les configurations depuis config.yaml
+with open('config.yaml', 'r') as file:
+    config = yaml.safe_load(file)
+    
+RAW_DATA_PATH = config['path']['raw_data_path']
+PROCESSED_DATA_PATH = config['path']['processed_data_path']
 
 def haversine_distance(lat1, lon1, lat2, lon2):
     """Calcule la distance entre deux points en kilomètres."""

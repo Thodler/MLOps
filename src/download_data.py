@@ -1,7 +1,13 @@
 import numpy as np
 import pandas as pd
 import os
-from config import RAW_DATA_PATH
+import yaml
+
+# Charger les configurations depuis config.yaml
+with open('config.yaml', 'r') as file:
+    config = yaml.safe_load(file)
+
+RAW_DATA_PATH = config['path']['raw_data_path']
 
 def generate_sample_data(n_samples=10000):
     """Génère un ensemble de données d'exemple pour les trajets de taxis NYC."""

@@ -1,6 +1,13 @@
 import pandas as pd
 import joblib
-from config import MODEL_PATH, FEATURES
+import yaml
+
+# Charger les configurations depuis config.yaml
+with open('config.yaml', 'r') as file:
+    config = yaml.safe_load(file)
+    
+MODEL_PATH = config['path']['model_path']
+FEATURES = config['value']['features']
 
 def load_model():
     """Charge le modèle entraîné."""

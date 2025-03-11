@@ -1,0 +1,18 @@
+path:
+  raw_data_path: 'data/raw/nyc_taxi_data.csv'
+  processed_data_path: 'data/processed/nyc_taxi_data.csv'
+  model_path: 'models/taxi_duration_model.joblib'
+
+value:
+  random_state: 42
+  test_size: 0.2
+  target: 'trip_duration'
+  features:
+    - pickup_longitude
+    - pickup_latitude
+    - dropoff_longitude
+    - dropoff_latitude
+    - passenger_count
+    - hour_of_day
+    - day_of_week
+    - distance_km
