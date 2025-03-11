@@ -5,6 +5,7 @@ Ce projet vise à prédire la durée des trajets de taxis à New York City.
 ## Structure du projet
 - `data/`: Dossier contenant les données brutes et traitées
 - `src/`: Code source du projet
+  - `download_data.py`: Fonctions pour télécharger ou générer des données d'exemple
   - `preprocessing.py`: Fonctions de prétraitement des données
   - `train.py`: Logique d'entraînement du modèle
   - `predict.py`: Fonctions pour faire des prédictions
