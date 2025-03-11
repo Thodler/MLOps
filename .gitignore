@@ -21,3 +21,4 @@ build/
 *.csv
 *.parquet
 *.xlsx
+*.db
