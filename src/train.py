@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import Ridge  # Importer Ridge
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import joblib
 import os
@@ -20,13 +21,11 @@ def train_model():
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE
     )
-    
+        
     # Initialiser le modèle
-    model = RandomForestRegressor(
-        n_estimators=100,
-        max_depth=10,
-        random_state=RANDOM_STATE,
-        n_jobs=-1
+    model = Ridge(
+        alpha=1.0,  # Paramètre de régularisation
+        random_state=RANDOM_STATE
     )
     
     # Entraîner le modèle
