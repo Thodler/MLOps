@@ -1,55 +1,67 @@
 import pandas as pd
 import joblib
-import yaml
 
-# Charger les configurations depuis config.yaml
-with open('config.yaml', 'r') as file:
-    config = yaml.safe_load(file)
-    
-MODEL_PATH = config['path']['model_path']
-FEATURES = config['value']['features']
+def preprocess_new_data(new_data, scaler):
+    """Prétraite les nouvelles données pour la prédiction."""
+    # Convertir les colonnes de date/heure
+    new_data['pickup_datetime'] = pd.to_datetime(new_data['pickup_datetime'])
+    new_data['dropoff_datetime'] = pd.to_datetime(new_data['dropoff_datetime'])
 
-def load_model():
-    """Charge le modèle entraîné."""
-    return joblib.load(MODEL_PATH)
+    # Calculer la durée du trajet en secondes (cible)
+    new_data['trip_duration'] = (new_data['dropoff_datetime'] - new_data['pickup_datetime']).dt.total_seconds()
 
-def predict(model, data):
+    # Sélectionner les caractéristiques
+    features = ['passenger_count', 'pickup_longitude', 'pickup_latitude', 'dropoff_longitude', 'dropoff_latitude']
+    X = new_data[features]
+
+    # Normalisation des données avec le scaler sauvegardé
+    X = scaler.transform(X)
+
+    return X
+
+def predict_new_data(model, scaler, new_data):
     """Fait des prédictions sur de nouvelles données."""
-    # S'assurer que les données ont les bonnes features
-    X = data[FEATURES]
+    # Prétraiter les nouvelles données
+    X = preprocess_new_data(new_data, scaler)
+
     # Faire des prédictions
     predictions = model.predict(X)
-    return predictions
 
-def predict_single_trip(model, trip_data):
-    """Prédit la durée d'un seul trajet."""
-    # Convertir en DataFrame
-    df = pd.DataFrame([trip_data])
-    
-    # Vérifier que toutes les features nécessaires sont présentes
-    for feature in FEATURES:
-        if feature not in df.columns:
-            raise ValueError(f"La caractéristique '{feature}' est manquante")
-    
-    # Faire la prédiction
-    duration = predict(model, df)[0]
-    return duration
+    # Ajouter les prédictions aux nouvelles données
+    new_data['predicted_trip_duration'] = predictions
+
+    return new_data
+
+def main():
+    # Chemins des fichiers
+    model_path = "models/taxi_trip_duration_model.pkl"
+    scaler_path = "models/scaler.pkl"
+
+    # Charger le modèle Ridge et le scaler
+    print("Chargement du modèle Ridge et du scaler...")
+    model = joblib.load(model_path)
+    scaler = joblib.load(scaler_path)
+
+    # Exemple de nouvelles données (à remplacer par vos propres données)
+    new_data = pd.DataFrame({
+        'id': [1, 2],
+        'vendor_id': [1, 2],
+        'pickup_datetime': ['2023-10-01 12:00:00', '2023-10-01 12:30:00'],
+        'dropoff_datetime': ['2023-10-01 12:30:00', '2023-10-01 13:00:00'],
+        'passenger_count': [1, 2],
+        'pickup_longitude': [-73.9857, -73.9881],
+        'pickup_latitude': [40.7484, 40.7490],
+        'dropoff_longitude': [-73.9881, -73.9857],
+        'dropoff_latitude': [40.7490, 40.7484],
+        'store_and_fwd_flag': ['N', 'N']
+    })
+
+    # Faire des prédictions sur les nouvelles données
+    print("Prédiction des durées de trajet...")
+    predictions = predict_new_data(model, scaler, new_data)
+
+    # Afficher les prédictions
+    print(predictions[['id', 'predicted_trip_duration']])
 
 if __name__ == "__main__":
-    # Exemple d'utilisation
-    model = load_model()
-    
-    # Créer une entrée d'exemple
-    sample_trip = {
-        'pickup_longitude': -73.9,
-        'pickup_latitude': 40.7,
-        'dropoff_longitude': -73.8,
-        'dropoff_latitude': 40.8,
-        'passenger_count': 2,
-        'hour_of_day': 14,
-        'day_of_week': 3,
-        'distance_km': 5.2
-    }
-    
-    predicted_duration = predict_single_trip(model, sample_trip)
-    print(f"Durée prévue du trajet: {predicted_duration:.2f} secondes")
+    main()

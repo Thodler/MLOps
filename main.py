@@ -1,37 +1,28 @@
-from src.download_data import generate_sample_data
-from src.preprocessing import preprocess_data
-from src.train import train_model
-from src.predict import load_model, predict_single_trip
+import os
+from src.load_data import main as load_data
+from src.train_model import main as train_model
+from src.evaluate_model import main as evaluate_model
+from src.predict import main as predict
 
-def run_pipeline():
-    """Exécute le pipeline complet."""
-    print("Étape 1: Téléchargement/génération des données")
-    generate_sample_data()
-    
-    print("\nÉtape 2: Prétraitement des données")
-    preprocess_data()
-    
-    print("\nÉtape 3: Entraînement du modèle")
+def main():
+    # Étape 1 : Télécharger et charger les données dans SQLite
+    print("Étape 1 : Téléchargement et chargement des données...")
+    load_data()
+
+    # Étape 2 : Entraîner le modèle
+    print("\nÉtape 2 : Entraînement du modèle...")
     train_model()
+
+    # Étape 3 : Évaluer le modèle
+    print("\nÉtape 3 : Évaluation du modèle...")
+    evaluate_model()
     
-    print("\nÉtape b4: Vérification de l'inférence")
-    model = load_model()
+    # Étape 3 : Évaluer le modèle
+    print("\nÉtape 3 : Prediction...")
+    predict()
+
+    print("\nPipeline terminé avec succès !")
     
-    # Exemple de trajet pour tester l'inférence
-    sample_trip = {
-        'pickup_longitude': -73.9,
-        'pickup_latitude': 40.7,
-        'dropoff_longitude': -73.8,
-        'dropoff_latitude': 40.8,
-        'passenger_count': 2,
-        'hour_of_day': 14,
-        'day_of_week': 3,
-        'distance_km': 5.2
-    }
-    
-    predicted_duration = predict_single_trip(model, sample_trip)
-    print(f"Durée prévue du trajet: {predicted_duration:.2f} secondes")
-    print(f"                      = {predicted_duration/60:.2f} minutes")
 
 if __name__ == "__main__":
-    run_pipeline()
+    main()
