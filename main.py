@@ -17,8 +17,8 @@ def main():
     print("\nÉtape 3 : Évaluation du modèle...")
     evaluate_model()
     
-    # Étape 3 : Évaluer le modèle
-    print("\nÉtape 3 : Prediction...")
+    # Étape 4 : Évaluer le modèle
+    print("\nÉtape 4 : Prediction...")
     predict()
 
     print("\nPipeline terminé avec succès !")
